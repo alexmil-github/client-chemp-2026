@@ -3,13 +3,14 @@ export default {
   name: "LoginView",
   data() {
     return {
-      login: null,
-      password: null,
+      login: "test_login_01",
+      password: "123456578",
       errors: ''
     }
   },
   methods: {
-    async handleLogin() {
+    async handleLogin(e) {
+      e.preventDefault()
       const url = 'https://comfort.webtm.ru/api/login';
       const options = {
         method: 'POST',
@@ -20,14 +21,16 @@ export default {
       try {
         const response = await fetch(url, options);
         const data = await response.json();
-        console.log(data);
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('name', data.username);
-          this.$router.push('/profile');
+        if (response.ok) {
+          console.log(data);
+          localStorage.setItem('token', data.token)
+          localStorage.setItem('user', data.username)
+          this.$router.push('/profile')
         } else {
-          alert('Логин или пароль неверный');
+          this.errors = data.errors
         }
+        // Сохраняем токен и информацию о пользователе
+
       } catch (error) {
         console.error(error);
       }
@@ -39,17 +42,22 @@ export default {
 <template>
   <div id="loginPage" class="page">
     <h1>Вход</h1>
-    <form id="loginForm" @submit.prevent="handleLogin">
+
+    <div v-if="errors" class="alert alert-danger mb-4">
+      <strong>Ошибки:</strong> {{ errors }}
+    </div>
+
+    <form id="loginForm" @submit="handleLogin">
       <div class="form-group mb-3">
         <label for="loginLogin">Логин</label>
-        <input v-model="login" type="text" class="form-control" id="loginLogin" placeholder="Введите логин" value="test_login_01">
+        <input type="text" class="form-control" id="loginLogin" placeholder="Введите логин" value="test_login_01" v-model="login">
       </div>
       <div class="form-group mb-3">
         <label for="loginPassword">Пароль</label>
-        <input v-model="password" type="password" class="form-control" id="loginPassword" placeholder="Введите пароль" value="12345678">
+        <input type="password" class="form-control" id="loginPassword" placeholder="Введите пароль" value="12345678" v-model="password">
       </div>
       <button type="submit" class="btn btn-primary mt-2">Войти</button>
-      <router-link to="/register" class="btn btn-secondary mt-2 ms-2">Нет аккаунта?</router-link>
+      <router-link class="btn btn-secondary mt-2 ms-2" to="/register">Нет аккаунта?</router-link>
     </form>
   </div>
 </template>

@@ -1,6 +1,13 @@
 <script>
 export default {
-  name: "NavigationBar"
+  name: "NavigationBar",
+  methods: {
+    logout() {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      this.$router.push('/login')
+    }
+  }
 }
 </script>
 
@@ -13,7 +20,7 @@ export default {
         <router-link class="nav-link active" to="/register">Регистрация</router-link>
         <router-link class="nav-link active" to="/login">Войти</router-link>
         <router-link class="nav-link active" to="/profile">Профиль</router-link>
-        <router-link class="nav-link active" to="">Выйти</router-link>
+        <a class="nav-link active" href="#" @click.prevent="logout">Выйти</a>
 
 
       </div>
